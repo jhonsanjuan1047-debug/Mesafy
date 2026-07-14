@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mesafy · Tu restaurante en un QR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#1A6B4A;--brand-dark:#0D3D29;--brand-light:#E8F5EF;
+  --gold:#D4A843;--gold-dark:#A07820;--gold-light:#FDF5E4;
+  --ember:#E8622A;--cream:#FDF8F0;
+  --text:#141A12;--text-2:#3D4A3A;--text-3:#7A8A77;
+  --surface:#FFFFFF;--surface-2:#F6F8F5;--border:#E2E8DF;
+  --r:14px;--rl:22px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;color:var(--text);background:var(--surface);overflow-x:hidden}
+
+/* ── CURSOR GLOW ── */
+.cursor-glow{
+  position:fixed;width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,168,67,.06) 0%,transparent 70%);
+  pointer-events:none;z-index:0;transform:translate(-50%,-50%);
+  transition:left .08s,top .08s;
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5vw;height:68px;
+  transition:background .3s,border .3s;
+}
+nav.scrolled{background:rgba(10,20,13,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.08)}
+.logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.5px;color:#fff}
+.logo span{color:var(--gold)}
+.nav-links{display:flex;gap:28px;align-items:center}
+nav a{font-size:14px;color:rgba(255,255,255,.75);text-decoration:none;font-weight:500;transition:color .2s}
+nav a:hover{color:#fff}
+.btn-nav{
+  background:var(--gold);color:var(--text);border:none;
+  padding:10px 22px;border-radius:999px;font-size:14px;font-weight:700;
+  cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s,transform .15s;
+}
+.btn-nav:hover{background:#e8bc50;transform:translateY(-1px)}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;position:relative;overflow:hidden;
+  display:flex;align-items:center;
+  background:#050E08;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 60% 40%,rgba(26,107,74,.35) 0%,transparent 65%),
+    radial-gradient(ellipse 50% 40% at 20% 70%,rgba(212,168,67,.12) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 50% at 80% 80%,rgba(232,98,42,.08) 0%,transparent 55%);
+}
+.hero-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.particle{
+  position:absolute;border-radius:50%;
+  background:rgba(212,168,67,.6);
+  animation:particleFloat linear infinite;
+}
+.hero-grid{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;
+  align-items:center;max-width:1100px;margin:0 auto;
+  width:100%;padding:120px 5vw 80px;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);background:rgba(212,168,67,.12);border:1px solid rgba(212,168,67,.3);
+  padding:7px 16px;border-radius:999px;margin-bottom:22px;
+}
+.hero-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(38px,5vw,62px);
+  font-weight:800;line-height:1.06;letter-spacing:-.025em;
+  color:#fff;margin-bottom:20px;
+}
+.hero-title em{font-style:normal;color:var(--gold)}
+.hero-title .line-accent{
+  position:relative;display:inline-block;
+}
+.hero-title .line-accent::after{
+  content:'';position:absolute;left:0;bottom:-4px;width:100%;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--ember));border-radius:2px;
+}
+.hero-sub{font-size:17px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:36px;max-width:460px}
+.btn-gold{
+  display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,var(--gold),#E8BC50);
+  color:var(--text);border:none;
+  padding:17px 32px;border-radius:999px;
+  font-size:16px;font-weight:700;font-family:'Inter',sans-serif;
+  cursor:pointer;transition:transform .2s,box-shadow .2s;
+  text-decoration:none;box-shadow:0 8px 32px rgba(212,168,67,.35);
+}
+.btn-gold:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(212,168,67,.4)}
+.hero-trust{
+  display:flex;align-items:center;gap:16px;margin-top:28px;flex-wrap:wrap;
+}
+.trust-item{
+  display:flex;align-items:center;gap:7px;
+  font-size:13px;color:rgba(255,255,255,.5);font-weight:500;
+}
+.trust-item i{color:var(--gold);font-size:16px}
+
+/* ── PARTICLES ANIM ── */
+@keyframes particleFloat{
+  0%{transform:translateY(100vh) scale(0);opacity:0}
+  10%{opacity:1}
+  90%{opacity:.5}
+  100%{transform:translateY(-10vh) scale(1.2);opacity:0}
+}
+
+/* ── PHONE MOCKUP ── */
+.phone-wrap{position:relative;display:flex;justify-content:center;align-items:center}
+.phone{
+  width:270px;border-radius:42px;
+  background:linear-gradient(145deg,#1a1a1a,#0a0a0a);
+  padding:12px;
+  box-shadow:
+    0 50px 100px rgba(0,0,0,.6),
+    0 0 0 1px rgba(255,255,255,.08) inset,
+    0 0 60px rgba(26,107,74,.2);
+  position:relative;z-index:2;
+  animation:phoneFloat 6s ease-in-out infinite;
+}
+@keyframes phoneFloat{
+  0%,100%{transform:translateY(0) rotate(-1deg)}
+  50%{transform:translateY(-14px) rotate(1deg)}
+}
+.phone-screen{background:#0F1A12;border-radius:32px;overflow:hidden;min-height:500px;position:relative}
+.phone-notch{
+  width:90px;height:26px;background:#0a0a0a;
+  border-radius:0 0 18px 18px;margin:0 auto;position:relative;z-index:2;
+}
+.phone-header{
+  padding:12px 16px 10px;
+  background:linear-gradient(180deg,rgba(26,107,74,.4) 0%,transparent 100%);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.phone-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#fff}
+.phone-logo span{color:var(--gold)}
+.phone-mesa{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}
+.phone-cats{
+  display:flex;gap:6px;padding:10px 14px;
+  border-bottom:1px solid rgba(255,255,255,.06);overflow:hidden;
+}
+.phone-cat{font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;white-space:nowrap}
+.phone-cat.active{background:var(--gold);color:var(--text)}
+.phone-cat.inactive{background:rgba(255,255,255,.07);color:rgba(255,255,255,.4)}
+.phone-item{
+  display:flex;gap:10px;padding:10px 14px;
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.phone-thumb{
+  width:44px;height:44px;border-radius:10px;
+  background:rgba(255,255,255,.07);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+}
+.phone-thumb i{font-size:20px;color:rgba(255,255,255,.3)}
+.phone-item-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.9)}
+.phone-item-desc{font-size:10px;color:rgba(255,255,255,.3);margin:2px 0}
+.phone-item-price{font-size:12px;font-weight:700;color:var(--gold);font-family:'Syne',sans-serif}
+.phone-counter{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(26,107,74,.4);border-radius:999px;
+  padding:4px 10px;margin-top:5px;border:1px solid rgba(26,107,74,.6);
+}
+.phone-counter span{font-size:11px;font-weight:700;color:#4DC88A}
+.phone-counter i{font-size:11px;color:#4DC88A}
+.phone-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(135deg,var(--brand),var(--brand-dark));
+  padding:14px 16px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.phone-bar-label{font-size:10px;color:rgba(255,255,255,.6)}
+.phone-bar-total{font-size:17px;font-weight:700;color:#fff;font-family:'Syne',sans-serif}
+.phone-bar-btn{
+  background:var(--gold);color:var(--text);border:none;
+  font-size:11px;font-weight:700;padding:7px 14px;
+  border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;
+}
+
+/* ── FLOATING CARDS ── */
+.float-card{
+  position:absolute;background:rgba(15,25,18,.95);
+  border:1px solid rgba(255,255,255,.12);border-radius:16px;
+  padding:12px 14px;backdrop-filter:blur(12px);z-index:3;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+.float-card.card-1{right:-50px;top:40px;min-width:160px;animation:floatCard1 4s ease-in-out infinite}
+.float-card.card-2{left:-60px;bottom:80px;min-width:150px;animation:floatCard2 5s ease-in-out infinite}
+@keyframes floatCard1{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes floatCard2{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+.float-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.float-row{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:rgba(255,255,255,.7);padding:2px 0}
+.float-tag{
+  display:inline-block;margin-top:7px;font-size:10px;font-weight:700;
+  padding:4px 10px;border-radius:999px;
+}
+.float-tag.green{background:rgba(26,107,74,.4);color:#4DC88A;border:1px solid rgba(77,200,138,.2)}
+.float-tag.gold{background:rgba(212,168,67,.2);color:var(--gold);border:1px solid rgba(212,168,67,.3)}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-left{opacity:0;transform:translateX(-32px);transition:opacity .7s ease,transform .7s ease}
+.reveal-left.visible{opacity:1;transform:translateX(0)}
+.reveal-right{opacity:0;transform:translateX(32px);transition:opacity .7s ease,transform .7s ease}
+.reveal-right.visible{opacity:1;transform:translateX(0)}
+.delay-1{transition-delay:.1s}.delay-2{transition-delay:.2s}.delay-3{transition-delay:.3s}.delay-4{transition-delay:.4s}
+
+/* ── SECTION BASE ── */
+section{padding:96px 5vw}
+.section-wrap{max-width:1100px;margin:0 auto}
+.section-label{
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;
+}
+.section-label::before{content:'';width:24px;height:2px;border-radius:1px;background:currentColor;display:inline-block}
+.section-title{
+  font-family:'Syne',sans-serif;font-size:clamp(28px,3.5vw,46px);
+  font-weight:800;letter-spacing:-.025em;line-height:1.08;
+  margin-bottom:14px;
+}
+.section-sub{font-size:17px;color:var(--text-2);line-height:1.7;max-width:520px}
+
+/* ── NUMBERS BAR ── */
+.numbers{
+  background:linear-gradient(135deg,#0A1A0E 0%,#0F2318 100%);
+  padding:56px 5vw;
+}
+.numbers-grid{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:0;
+}
+.number-item{
+  text-align:center;padding:24px 20px;
+  border-right:1px solid rgba(255,255,255,.08);
+}
+.number-item:last-child{border-right:none}
+.number-val{
+  font-family:'Syne',sans-serif;font-size:48px;font-weight:800;
+  color:#fff;letter-spacing:-.03em;line-height:1;
+}
+.number-val span{color:var(--gold)}
+.number-label{font-size:13px;color:rgba(255,255,255,.45);margin-top:6px}
+
+/* ── PROBLEMA ── */
+.problema{
+  background:linear-gradient(160deg,#070F09 0%,#0A1A0E 100%);
+  position:relative;overflow:hidden;
+}
+.problema::before{
+  content:'';position:absolute;
+  top:-200px;right:-200px;width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(232,98,42,.08) 0%,transparent 70%);
+}
+.problema .section-label{color:var(--gold)}
+.problema .section-title{color:#fff}
+.problema .section-sub{color:rgba(255,255,255,.5)}
+.problema-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:48px}
+.problema-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:20px;padding:28px 24px;
+  transition:background .3s,border-color .3s,transform .3s;
+  cursor:default;
+}
+.problema-card:hover{background:rgba(255,255,255,.07);border-color:rgba(232,98,42,.3);transform:translateY(-4px)}
+.problema-icon{
+  width:48px;height:48px;border-radius:14px;
+  background:rgba(232,98,42,.15);border:1px solid rgba(232,98,42,.25);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+}
+.problema-icon i{font-size:22px;color:var(--ember)}
+.problema-card h3{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:10px}
+.problema-card p{font-size:14px;color:rgba(255,255,255,.45);line-height:1.65}
+
+/* ── CÓMO FUNCIONA ── */
+.como{background:var(--cream)}
+.como .section-label{color:var(--brand)}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:48px}
+.step{
+  background:#fff;border-radius:20px;padding:32px 26px;
+  border:1.5px solid var(--border);position:relative;
+  transition:border-color .25s,box-shadow .25s,transform .25s;
+}
+.step:hover{border-color:var(--brand);box-shadow:0 12px 40px rgba(26,107,74,.12);transform:translateY(-5px)}
+.step-num{
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:800;
+  color:var(--gold);letter-spacing:.06em;margin-bottom:18px;
+  display:flex;align-items:center;gap:8px;
+}
+.step-num::after{content:'';flex:1;height:1px;background:var(--border)}
+.step-icon-wrap{
+  width:56px;height:56px;border-radius:16px;
+  background:var(--brand-light);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+}
+.step-icon-wrap i{font-size:26px;color:var(--brand)}
+.step h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:10px}
+.step p{font-size:14px;color:var(--text-3);line-height:1.65}
+.step-arrow{
+  position:absolute;top:50%;right:-14px;
+  width:28px;height:28px;border-radius:50%;
+  background:var(--brand);
+  display:flex;align-items:center;justify-content:center;
+  z-index:1;transform:translateY(-50%);
+}
+.step-arrow i{font-size:14px;color:#fff}
+
+/* ── PARA QUIÉN ── */
+.para-quien{background:#fff}
+.para-quien .section-label{color:var(--brand)}
+.roles-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:48px}
+.role-card{
+  border-radius:20px;padding:32px 28px;
+  border:1.5px solid var(--border);
+  transition:transform .25s,box-shadow .25s;
+  cursor:default;
+}
+.role-card:hover{transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.1)}
+.role-card.comensal{background:linear-gradient(145deg,#F0FAF5,#E8F5EF)}
+.role-card.caja{background:linear-gradient(145deg,#FEF8EE,#FDF5E4)}
+.role-card.cocina{background:linear-gradient(145deg,#0F1A12,#0A1208)}
+.role-top{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.role-icon-wrap{
+  width:52px;height:52px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+}
+.role-card.comensal .role-icon-wrap{background:rgba(26,107,74,.15)}
+.role-card.comensal .role-icon-wrap i{color:var(--brand)}
+.role-card.caja .role-icon-wrap{background:rgba(212,168,67,.2)}
+.role-card.caja .role-icon-wrap i{color:var(--gold-dark)}
+.role-card.cocina .role-icon-wrap{background:rgba(255,255,255,.08)}
+.role-card.cocina .role-icon-wrap i{color:var(--gold)}
+.role-icon-wrap i{font-size:26px}
+.role-card h3{font-family:'Syne',sans-serif;font-size:19px;font-weight:700}
+.role-card.comensal h3,.role-card.caja h3{color:var(--text)}
+.role-card.cocina h3{color:#fff}
+.role-card p{font-size:14px;line-height:1.65;margin-bottom:18px}
+.role-card.comensal p{color:var(--text-2)}
+.role-card.caja p{color:var(--text-2)}
+.role-card.cocina p{color:rgba(255,255,255,.5)}
+.role-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.role-list li{font-size:13px;display:flex;align-items:flex-start;gap:8px}
+.role-list li i{font-size:15px;flex-shrink:0;margin-top:1px}
+.role-card.comensal .role-list li{color:var(--brand-dark)}
+.role-card.comensal .role-list li i{color:var(--brand)}
+.role-card.caja .role-list li{color:#6B4800}
+.role-card.caja .role-list li i{color:var(--gold-dark)}
+.role-card.cocina .role-list li{color:rgba(255,255,255,.6)}
+.role-card.cocina .role-list li i{color:var(--gold)}
+
+/* ── DEMO LIVE ── */
+.demo{
+  background:linear-gradient(160deg,#060E08,#0A1A0E);
+  padding:96px 5vw;position:relative;overflow:hidden;
+}
+.demo::before{
+  content:'';position:absolute;
+  top:-100px;left:50%;transform:translateX(-50%);
+  width:800px;height:400px;
+  background:radial-gradient(ellipse,rgba(26,107,74,.25) 0%,transparent 70%);
+}
+.demo .section-label{color:var(--gold)}
+.demo .section-title{color:#fff}
+.demo .section-sub{color:rgba(255,255,255,.5)}
+.demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:48px}
+.demo-card{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:20px;padding:24px;position:relative;overflow:hidden;
+  transition:border-color .3s,background .3s;
+}
+.demo-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at top left,rgba(26,107,74,.1),transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.demo-card:hover{border-color:rgba(26,107,74,.4);background:rgba(255,255,255,.07)}
+.demo-card:hover::before{opacity:1}
+.demo-card-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(26,107,74,.2);border:1px solid rgba(26,107,74,.3);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.demo-card-icon i{font-size:20px;color:#4DC88A}
+.demo-card h4{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:6px}
+.demo-card p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.6}
+.demo-pulse{
+  position:absolute;top:16px;right:16px;
+  width:10px;height:10px;border-radius:50%;background:#4DC88A;
+}
+.demo-pulse::after{
+  content:'';position:absolute;inset:-4px;border-radius:50%;
+  border:2px solid #4DC88A;opacity:.5;
+  animation:pulse 2s ease-out infinite;
+}
+@keyframes pulse{0%{transform:scale(1);opacity:.5}100%{transform:scale(2.5);opacity:0}}
+
+/* ── PRICE ── */
+.precio{background:var(--surface-2)}
+.precio .section-label{color:var(--brand)}
+.precio-wrap{display:grid;grid-template-columns:1fr 1.15fr;gap:20px;align-items:start;margin-top:48px}
+.precio-includes{
+  background:#fff;border-radius:20px;border:1.5px solid var(--border);padding:32px 28px;
+}
+.precio-includes h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:20px;color:var(--text)}
+.includes-list{list-style:none;display:flex;flex-direction:column;gap:14px}
+.includes-list li{display:flex;align-items:flex-start;gap:12px;font-size:14px;color:var(--text-2)}
+.includes-list li i{font-size:18px;color:var(--brand);flex-shrink:0;margin-top:1px}
+.precio-main{
+  background:linear-gradient(145deg,#0A1A0E,#0F2318);
+  border-radius:20px;border:1px solid rgba(212,168,67,.2);
+  padding:36px 32px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3),0 0 0 1px rgba(212,168,67,.1) inset;
+  position:relative;overflow:hidden;
+}
+.precio-main::before{
+  content:'';position:absolute;top:-80px;right:-80px;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,168,67,.08) 0%,transparent 70%);
+}
+.precio-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(212,168,67,.15);color:var(--gold);
+  border:1px solid rgba(212,168,67,.3);
+  font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:6px 14px;border-radius:999px;margin-bottom:20px;
+}
+.precio-name{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:8px}
+.precio-amount{
+  font-family:'Syne',sans-serif;font-size:54px;font-weight:800;
+  color:#fff;letter-spacing:-.04em;line-height:1;margin-bottom:4px;
+}
+.precio-amount span{font-size:24px;vertical-align:super;margin-right:2px}
+.precio-period{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:26px}
+.precio-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+.precio-list li{font-size:14px;display:flex;align-items:flex-start;gap:10px;color:rgba(255,255,255,.8)}
+.precio-list li i{font-size:17px;color:var(--gold);flex-shrink:0;margin-top:1px}
+.btn-gold-full{
+  display:block;width:100%;padding:16px;text-align:center;
+  background:linear-gradient(135deg,var(--gold),#E8BC50);
+  color:var(--text);border:none;border-radius:999px;
+  font-size:15px;font-weight:700;font-family:'Inter',sans-serif;
+  cursor:pointer;transition:transform .2s,box-shadow .2s;
+  text-decoration:none;box-shadow:0 8px 24px rgba(212,168,67,.3);
+}
+.btn-gold-full:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(212,168,67,.4)}
+.precio-note{font-size:12px;color:rgba(255,255,255,.3);text-align:center;margin-top:10px}
+
+/* ── TESTIMONIOS ── */
+.testimonios{background:#fff}
+.testimonios .section-label{color:var(--brand)}
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:48px}
+.testi-card{
+  background:var(--surface-2);border:1.5px solid var(--border);
+  border-radius:20px;padding:28px 24px;
+  transition:border-color .25s,transform .25s;
+}
+.testi-card:hover{border-color:var(--brand);transform:translateY(-4px)}
+.testi-stars{color:var(--gold);font-size:16px;letter-spacing:3px;margin-bottom:14px}
+.testi-text{font-size:15px;color:var(--text-2);line-height:1.75;margin-bottom:20px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:12px}
+.testi-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--brand-light);display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--brand);
+  flex-shrink:0;
+}
+.testi-name{font-size:14px;font-weight:700;color:var(--text)}
+.testi-resto{font-size:12px;color:var(--text-3);margin-top:2px}
+
+/* ── CTA FINAL ── */
+.cta-final{
+  padding:0;position:relative;overflow:hidden;
+  background:linear-gradient(160deg,#050E08 0%,#0A1A0E 100%);
+}
+.cta-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  min-height:480px;max-width:1100px;margin:0 auto;
+}
+.cta-left{
+  padding:80px 60px 80px 5vw;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.cta-label{
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:16px;
+}
+.cta-title{
+  font-family:'Syne',sans-serif;font-size:clamp(28px,3.5vw,46px);
+  font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1.1;
+  margin-bottom:16px;
+}
+.cta-sub{font-size:16px;color:rgba(255,255,255,.55);line-height:1.65;margin-bottom:32px}
+.cta-right{
+  background:rgba(255,255,255,.03);border-left:1px solid rgba(255,255,255,.08);
+  padding:60px 40px;display:flex;flex-direction:column;justify-content:center;
+}
+.cta-right h3{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:6px}
+.cta-right p{font-size:14px;color:rgba(255,255,255,.45);margin-bottom:24px}
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:6px}
+.form-input{
+  width:100%;padding:12px 14px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--r);font-size:14px;font-family:'Inter',sans-serif;
+  color:#fff;outline:none;transition:border-color .2s,background .2s;
+}
+.form-input::placeholder{color:rgba(255,255,255,.25)}
+.form-input:focus{border-color:var(--gold);background:rgba(255,255,255,.1)}
+.form-input option{background:#0A1A0E;color:#fff}
+.btn-submit-inline{
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,var(--gold),#E8BC50);
+  color:var(--text);border:none;border-radius:999px;
+  font-size:15px;font-weight:700;font-family:'Inter',sans-serif;
+  cursor:pointer;margin-top:8px;
+  transition:transform .2s,box-shadow .2s;
+  box-shadow:0 8px 24px rgba(212,168,67,.3);
+}
+.btn-submit-inline:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(212,168,67,.4)}
+.success-inline{
+  text-align:center;padding:20px;display:none;
+}
+.success-inline i{font-size:44px;color:var(--gold);display:block;margin-bottom:12px}
+.success-inline h4{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:6px}
+.success-inline p{font-size:14px;color:rgba(255,255,255,.5)}
+
+/* ── FOOTER ── */
+footer{
+  background:#030808;padding:48px 5vw;
+  border-top:1px solid rgba(255,255,255,.06);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;
+}
+.footer-logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:rgba(255,255,255,.9)}
+.footer-logo span{color:var(--gold)}
+footer p{font-size:12px;color:rgba(255,255,255,.25)}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-size:13px;color:rgba(255,255,255,.35);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--gold)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .hero-grid{grid-template-columns:1fr;padding:100px 5vw 60px}
+  .phone-wrap{order:-1}
+  .float-card.card-1{right:-10px}
+  .float-card.card-2{left:-10px}
+  .phone{width:230px}
+  .precio-wrap{grid-template-columns:1fr}
+  .cta-grid{grid-template-columns:1fr}
+  .cta-right{border-left:none;border-top:1px solid rgba(255,255,255,.08);padding:40px 5vw}
+  .cta-left{padding:60px 5vw 40px}
+  .step-arrow{display:none}
+  .nav-links .hide-mobile{display:none}
+  .number-item{border-right:none;border-bottom:1px solid rgba(255,255,255,.08)}
+  .number-item:last-child{border-bottom:none}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-glow" id="glow"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <span class="logo">mesa<span>fy</span></span>
+  <div class="nav-links">
+    <a href="#como" class="hide-mobile">Cómo funciona</a>
+    <a href="#precio" class="hide-mobile">Precio</a>
+    <a href="#contacto" class="hide-mobile">Contacto</a>
+    <button class="btn-nav" onclick="document.getElementById('contacto').scrollIntoView({behavior:'smooth'})">Quiero Mesafy</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-particles" id="particles"></div>
+
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow">
+        <i class="ti ti-flame"></i>
+        Para restaurantes y bares
+      </div>
+      <h1 class="hero-title">
+        Deja que tu menú<br>
+        <span class="line-accent">trabaje por ti</span><br>
+        <em>24/7</em>
+      </h1>
+      <p class="hero-sub">
+        Tus clientes escanean un QR en la mesa, arman su pedido y este llega directo a caja y cocina. Sin errores. Sin esperas. Sin meseros corriendo.
+      </p>
+      <button class="btn-gold" onclick="document.getElementById('contacto').scrollIntoView({behavior:'smooth'})">
+        <i class="ti ti-rocket"></i>
+        Digitaliza tu restaurante
+      </button>
+      <div class="hero-trust">
+        <div class="trust-item"><i class="ti ti-clock"></i> Listo en 24 horas</div>
+        <div class="trust-item"><i class="ti ti-device-mobile"></i> Sin app que descargar</div>
+        <div class="trust-item"><i class="ti ti-shield-check"></i> Mensualidad</div>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="float-card card-1">
+        <div class="float-label">✅ Nuevo pedido</div>
+        <div class="float-row"><span>Mesa 5</span><span>3 ítems</span></div>
+        <div class="float-row"><span>Ceviche · Bandeja</span></div>
+        <div class="float-tag green">En cocina ahora</div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-header">
+            <div class="phone-logo">mesa<span>fy</span></div>
+            <div class="phone-mesa">Tu restaurante · Mesa 7</div>
+          </div>
+          <div class="phone-cats">
+            <div class="phone-cat active">Entradas</div>
+            <div class="phone-cat inactive">Fuertes</div>
+            <div class="phone-cat inactive">Bebidas</div>
+          </div>
+          <div class="phone-item">
+            <div class="phone-thumb"><i class="ti ti-bowl"></i></div>
+            <div>
+              <div class="phone-item-name">Patacones con hogao</div>
+              <div class="phone-item-desc">Plátano verde, queso costeño</div>
+              <div class="phone-item-price">$14.000</div>
+              <div class="phone-counter">
+                <i class="ti ti-minus"></i><span>2</span><i class="ti ti-plus"></i>
+              </div>
+            </div>
+          </div>
+          <div class="phone-item">
+            <div class="phone-thumb"><i class="ti ti-fish"></i></div>
+            <div>
+              <div class="phone-item-name">Ceviche de camarón</div>
+              <div class="phone-item-desc">Leche de tigre, cilantro</div>
+              <div class="phone-item-price">$22.000</div>
+            </div>
+          </div>
+          <div class="phone-item">
+            <div class="phone-thumb"><i class="ti ti-glass-full"></i></div>
+            <div>
+              <div class="phone-item-name">Limonada de coco</div>
+              <div class="phone-item-desc">Cremosa, bien fría</div>
+              <div class="phone-item-price">$8.000</div>
+            </div>
+          </div>
+          <div style="height:64px"></div>
+          <div class="phone-bar">
+            <div>
+              <div class="phone-bar-label">3 ítems</div>
+              <div class="phone-bar-total">$44.000</div>
+            </div>
+            <button class="phone-bar-btn">Enviar pedido</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="float-card card-2">
+        <div class="float-label">🍳 Cocina</div>
+        <div class="float-row"><span>Mesa 7 · Ronda 1</span></div>
+        <div class="float-row"><span>2× Patacones</span></div>
+        <div class="float-row"><span>1× Ceviche</span></div>
+        <div class="float-tag gold">~12 min</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NUMBERS -->
+<div class="numbers reveal">
+  <div class="numbers-grid">
+    <div class="number-item">
+      <div class="number-val" data-target="0"><span>0</span></div>
+      <div class="number-label">Errores por pedido mal anotado</div>
+    </div>
+    <div class="number-item">
+      <div class="number-val" data-target="60"><span>0</span>%</div>
+      <div class="number-label">Menos tiempo tomando pedidos</div>
+    </div>
+    <div class="number-item">
+      <div class="number-val" data-target="1"><span>0</span> día</div>
+      <div class="number-label">Para tenerlo funcionando</div>
+    </div>
+    <div class="number-item">
+      <div class="number-val" data-target="100"><span>0</span>%</div>
+      <div class="number-label">Digital, sin papel ni comandas</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEMA -->
+<section class="problema">
+  <div class="section-wrap">
+    <p class="section-label reveal" style="color:var(--gold)">El problema</p>
+    <h2 class="section-title reveal" style="color:#fff;max-width:560px">¿Cuánto le cuesta el desorden a tu restaurante?</h2>
+    <p class="section-sub reveal">Un pedido mal tomado no solo pierde un plato, pierde la confianza de un cliente que no va a volver.</p>
+    <div class="problema-grid">
+      <div class="problema-card reveal delay-1">
+        <div class="problema-icon"><i class="ti ti-pencil-off"></i></div>
+        <h3>Letra ilegible</h3>
+        <p>El mesero anota rápido y cocina interpreta lo que puede. El plato llega mal y el cliente no regresa.</p>
+      </div>
+      <div class="problema-card reveal delay-2">
+        <div class="problema-icon"><i class="ti ti-run"></i></div>
+        <h3>Meseros saturados</h3>
+        <p>En hora pico los clientes esperan 15 minutos solo para pedir. Mesas que podían rotar no rotan.</p>
+      </div>
+      <div class="problema-card reveal delay-3">
+        <div class="problema-icon"><i class="ti ti-chart-bar-off"></i></div>
+        <h3>Sin datos reales</h3>
+        <p>No sabes qué platos se venden más, ni cuánto facturas. Gestionas a ciegas cada semana.</p>
+      </div>
+      <div class="problema-card reveal delay-4">
+        <div class="problema-icon"><i class="ti ti-star-off"></i></div>
+        <h3>Reseñas negativas</h3>
+        <p>Un error hoy es una reseña de una estrella mañana y diez clientes que nunca llegan a tu puerta.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section class="como" id="como">
+  <div class="section-wrap">
+    <p class="section-label reveal" style="color:var(--brand)">Cómo funciona</p>
+    <h2 class="section-title reveal">De la mesa al plato<br>en 3 pasos</h2>
+    <p class="section-sub reveal">Sin instalaciones complicadas. Sin capacitaciones largas. Funciona desde el primer día.</p>
+    <div class="steps-grid">
+      <div class="step reveal delay-1">
+        <div class="step-num">PASO 01</div>
+        <div class="step-icon-wrap"><i class="ti ti-qrcode"></i></div>
+        <h3>El cliente escanea el QR</h3>
+        <p>Cada mesa tiene un QR único. El comensal lo escanea con su celular y ve tu menú al instante, sin descargar ninguna app.</p>
+        <div class="step-arrow"><i class="ti ti-chevron-right"></i></div>
+      </div>
+      <div class="step reveal delay-2">
+        <div class="step-num">PASO 02</div>
+        <div class="step-icon-wrap"><i class="ti ti-shopping-cart"></i></div>
+        <h3>Arma y envía su pedido</h3>
+        <p>Elige los platos, agrega notas (sin cebolla, bien frío, etc.) y confirma. El pedido llega de inmediato a tu sistema.</p>
+        <div class="step-arrow"><i class="ti ti-chevron-right"></i></div>
+      </div>
+      <div class="step reveal delay-3">
+        <div class="step-num">PASO 03</div>
+        <div class="step-icon-wrap"><i class="ti ti-check"></i></div>
+        <h3>Caja aprueba, cocina prepara</h3>
+        <p>El pedido aparece en pantalla de caja para validarlo y pasa automáticamente a cocina. Sin papel, sin errores, sin gritos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARA QUIÉN -->
+<section class="para-quien">
+  <div class="section-wrap">
+    <p class="section-label reveal" style="color:var(--brand)">Para quién es</p>
+    <h2 class="section-title reveal">Tres equipos,<br>un solo sistema</h2>
+    <p class="section-sub reveal">Mesafy funciona en simultáneo para toda tu operación, en tiempo real.</p>
+    <div class="roles-grid">
+      <div class="role-card comensal reveal delay-1">
+        <div class="role-top">
+          <div class="role-icon-wrap"><i class="ti ti-device-mobile"></i></div>
+          <h3>El comensal</h3>
+        </div>
+        <p>Ve el menú, pide a su ritmo y recibe actualizaciones en vivo del estado de su plato.</p>
+        <ul class="role-list">
+          <li><i class="ti ti-check"></i>Menú digital con descripción</li>
+          <li><i class="ti ti-check"></i>Notas especiales por plato</li>
+          <li><i class="ti ti-check"></i>Seguimiento del pedido en vivo</li>
+          <li><i class="ti ti-check"></i>Pedir más sin llamar al mesero</li>
+        </ul>
+      </div>
+      <div class="role-card caja reveal delay-2">
+        <div class="role-top">
+          <div class="role-icon-wrap"><i class="ti ti-cash-register"></i></div>
+          <h3>La cajera</h3>
+        </div>
+        <p>Recibe cada pedido, lo revisa y lo aprueba antes de que llegue a cocina. Control total.</p>
+        <ul class="role-list">
+          <li><i class="ti ti-check"></i>Panel con pedidos en tiempo real</li>
+          <li><i class="ti ti-check"></i>Alerta de pedidos demorados</li>
+          <li><i class="ti ti-check"></i>Aprobar o rechazar en un clic</li>
+          <li><i class="ti ti-check"></i>Ver estado de todas las mesas</li>
+        </ul>
+      </div>
+      <div class="role-card cocina reveal delay-3">
+        <div class="role-top">
+          <div class="role-icon-wrap"><i class="ti ti-tools-kitchen-2"></i></div>
+          <h3>La cocina</h3>
+        </div>
+        <p>Pantalla tipo tablero con las comandas organizadas por estado. Sin papel, sin comandas perdidas.</p>
+        <ul class="role-list">
+          <li><i class="ti ti-check"></i>Pantalla de cocina en tiempo real</li>
+          <li><i class="ti ti-check"></i>Estado por comanda</li>
+          <li><i class="ti ti-check"></i>Notas especiales visibles</li>
+          <li><i class="ti ti-check"></i>Marcar listo con un toque</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUNCIONES -->
+<section class="demo">
+  <div class="section-wrap">
+    <p class="section-label reveal" style="color:var(--gold)">Funciones</p>
+    <h2 class="section-title reveal" style="color:#fff">Todo lo que tu restaurante<br>necesita, ya incluido</h2>
+    <p class="section-sub reveal">Sin extras, sin sorpresas. Todo en un solo pago.</p>
+    <div class="demo-grid">
+      <div class="demo-card reveal delay-1">
+        <div class="demo-pulse"></div>
+        <div class="demo-card-icon"><i class="ti ti-qrcode"></i></div>
+        <h4>QR por mesa</h4>
+        <p>Cada mesa tiene su código QR único imprimible. El comensal escanea y cae directo a tu menú.</p>
+      </div>
+      <div class="demo-card reveal delay-2">
+        <div class="demo-card-icon"><i class="ti ti-tools-kitchen-2"></i></div>
+        <h4>Pantalla de cocina</h4>
+        <p>Comandas en tiempo real organizadas por estado. El cocinero marca listo con un toque.</p>
+      </div>
+      <div class="demo-card reveal delay-3">
+        <div class="demo-card-icon"><i class="ti ti-cash-register"></i></div>
+        <h4>Panel de caja</h4>
+        <p>Todos los pedidos llegan a caja primero para validarlos antes de pasar a cocina.</p>
+      </div>
+      <div class="demo-card reveal delay-4">
+        <div class="demo-card-icon"><i class="ti ti-edit"></i></div>
+        <h4>Edita tu menú</h4>
+        <p>Agrega platos, cambia precios, activa o desactiva platos agotados. Tú tienes el control.</p>
+      </div>
+      <div class="demo-card reveal delay-1">
+        <div class="demo-card-icon"><i class="ti ti-note"></i></div>
+        <h4>Notas por plato</h4>
+        <p>El cliente puede escribir "sin cebolla" o "sin picante" en cada ítem. Llega directo a cocina.</p>
+      </div>
+      <div class="demo-card reveal delay-2">
+        <div class="demo-card-icon"><i class="ti ti-refresh"></i></div>
+        <h4>Rondas de pedido</h4>
+        <p>El cliente puede pedir más platos en cualquier momento sin tener que llamar al mesero.</p>
+      </div>
+      <div class="demo-card reveal delay-3">
+        <div class="demo-card-icon"><i class="ti ti-layout-dashboard"></i></div>
+        <h4>Dashboard del día</h4>
+        <p>Pedidos, ventas y mesas activas en tiempo real desde el panel de administración.</p>
+      </div>
+      <div class="demo-card reveal delay-4">
+        <div class="demo-card-icon"><i class="ti ti-device-mobile"></i></div>
+        <h4>Sin app que descargar</h4>
+        <p>Todo funciona desde el navegador del celular. Tus clientes no necesitan instalar nada.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRECIO -->
+<section class="precio" id="precio">
+  <div class="section-wrap">
+    <p class="section-label reveal" style="color:var(--brand)">Precio</p>
+    <h2 class="section-title reveal">Una mensualidad fija,<br>sin contratos</h2>
+    <p class="section-sub reveal">Una mensualidad fija, sin contratos de permanencia. Cancela cuando quieras.</p>
+    <div class="precio-wrap">
+      <div class="precio-includes reveal reveal-left">
+        <h3>¿Qué incluye la instalación?</h3>
+        <ul class="includes-list">
+          <li><i class="ti ti-check"></i>Configuración completa del menú de tu restaurante</li>
+          <li><i class="ti ti-check"></i>QR único imprimible para cada mesa</li>
+          <li><i class="ti ti-check"></i>Panel de caja y cocina configurados</li>
+          <li><i class="ti ti-check"></i>Panel de administración para gestionar tu menú</li>
+          <li><i class="ti ti-check"></i>Capacitación para tu equipo (1 hora)</li>
+          <li><i class="ti ti-check"></i>Actualizaciones y mejoras incluidas</li>
+          <li><i class="ti ti-check"></i>Soporte técnico permanente incluido</li>
+          <li><i class="ti ti-check"></i>Personalización con el nombre de tu restaurante</li>
+        </ul>
+      </div>
+      <div class="precio-main reveal reveal-right">
+        <div class="precio-badge"><i class="ti ti-star"></i> Suscripción mensual</div>
+        <p class="precio-name">Plan Mensual Mesafy</p>
+        <div class="precio-amount"><span>$</span>490.000</div>
+        <p class="precio-period">COP · Por mes, sin contrato de permanencia</p>
+        <ul class="precio-list">
+          <li><i class="ti ti-rocket"></i>Tu restaurante listo en 24 horas</li>
+          <li><i class="ti ti-calendar"></i>Facturación mensual automática</li>
+          <li><i class="ti ti-infinity"></i>Sin límite de pedidos ni mesas</li>
+          <li><i class="ti ti-edit"></i>Tú mismo editas el menú cuando quieras</li>
+          <li><i class="ti ti-headset"></i>Soporte técnico incluido siempre</li>
+        </ul>
+        <a href="#contacto" class="btn-gold-full" onclick="document.getElementById('contacto').scrollIntoView({behavior:'smooth'});return false;">
+          Empezar por $500.000/mes →
+        </a>
+        <p class="precio-note">Cancela cuando quieras, sin penalidades</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section class="testimonios">
+  <div class="section-wrap">
+    <p class="section-label reveal" style="color:var(--brand)">Testimonios</p>
+    <h2 class="section-title reveal">Restaurantes que ya<br>eliminaron el papel</h2>
+    <div class="testi-grid">
+      <div class="testi-card reveal delay-1">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Antes perdíamos un pedido por noche por letra ilegible. Desde que tenemos Mesafy, cero errores y los clientes quedan impresionados."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">CL</div>
+          <div>
+            <p class="testi-name">Carlos Lora</p>
+            <p class="testi-resto">La Tablita · Cartagena</p>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal delay-2">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"La instalación fue un día y al siguiente ya estábamos usándolo. Los meseros ahora atienden mejor porque no corren tanto a anotar."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">MR</div>
+          <div>
+            <p class="testi-name">María Restrepo</p>
+            <p class="testi-resto">El Fogón · Medellín</p>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal delay-3">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Los clientes jóvenes quedan fascinados. Dicen que parece la app de un restaurante de Bogotá. Nos da una imagen muy profesional."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">JP</div>
+          <div>
+            <p class="testi-name">Jorge Palomino</p>
+            <p class="testi-resto">Mar y Tierra · Barranquilla</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA + CONTACTO -->
+<section style="padding:0;background:linear-gradient(160deg,#050E08 0%,#0A1A0E 100%)" id="contacto">
+  <div class="cta-grid">
+    <div class="cta-left reveal reveal-left">
+      <p class="cta-label">¿Listo para empezar?</p>
+      <h2 class="cta-title">Tu restaurante merece tecnología de verdad</h2>
+      <p class="cta-sub">Llena el formulario y en menos de 24 horas te contactamos para empezar la instalación de Mesafy.</p>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="trust-item"><i class="ti ti-clock" style="color:var(--gold);font-size:18px"></i><span style="color:rgba(255,255,255,.55);font-size:14px">Instalación en 24 horas</span></div>
+        <div class="trust-item"><i class="ti ti-shield-check" style="color:var(--gold);font-size:18px"></i><span style="color:rgba(255,255,255,.55);font-size:14px">Mensualidad, sin sorpresas</span></div>
+        <div class="trust-item"><i class="ti ti-headset" style="color:var(--gold);font-size:18px"></i><span style="color:rgba(255,255,255,.55);font-size:14px">Soporte técnico siempre incluido</span></div>
+      </div>
+    </div>
+    <div class="cta-right reveal reveal-right">
+      <div id="cta-form">
+        <h3>Cuéntanos sobre tu restaurante</h3>
+        <p>Te respondemos por WhatsApp o correo</p>
+        <div class="form-group">
+          <label class="form-label">Nombre del restaurante o bar</label>
+          <input class="form-input" type="text" placeholder="Ej. La Tablita, El Rincón del Mar…">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tu nombre</label>
+          <input class="form-input" type="text" placeholder="Nombre completo">
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp</label>
+          <input class="form-input" type="tel" placeholder="+57 300 000 0000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ciudad</label>
+          <input class="form-input" type="text" placeholder="Ej. Cartagena, Bogotá, Cali…">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Número de mesas</label>
+          <select class="form-input">
+            <option value="">Selecciona</option>
+            <option>1 - 5 mesas</option>
+            <option>6 - 15 mesas</option>
+            <option>16 - 30 mesas</option>
+            <option>Más de 30 mesas</option>
+          </select>
+        </div>
+        <button class="btn-submit-inline" onclick="submitCTA()">
+          <i class="ti ti-send"></i> Enviar · Me interesa Mesafy
+        </button>
+      </div>
+      <div class="success-inline" id="cta-success">
+        <i class="ti ti-circle-check"></i>
+        <h4>¡Recibido! Te escribimos pronto</h4>
+        <p>En menos de 24 horas te contactamos por WhatsApp para empezar la instalación de Mesafy en tu restaurante.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">mesa<span>fy</span></span>
+  <p>© 2025 Mesafy · Todos los derechos reservados</p>
+  <div class="footer-links">
+    <a href="#">WhatsApp</a>
+    <a href="#">Instagram</a>
+    <a href="#precio">Precio</a>
+    <a href="#contacto">Contacto</a>
+  </div>
+</footer>
+
+<script>
+// Cursor glow
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top  = e.clientY + 'px';
+});
+
+// Nav scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Particles
+const pc = document.getElementById('particles');
+const icons = ['ti-star','ti-flame','ti-glass-full','ti-tools-kitchen-2','ti-leaf','ti-wine'];
+for (let i = 0; i < 18; i++) {
+  const p = document.createElement('i');
+  p.className = 'ti ' + icons[i % icons.length] + ' particle';
+  const size = Math.random() * 14 + 8;
+  p.style.cssText = `
+    font-size:${size}px;
+    left:${Math.random()*100}%;
+    animation-duration:${Math.random()*12+10}s;
+    animation-delay:${Math.random()*12}s;
+    opacity:${Math.random()*.3+.05};
+    color:rgba(212,168,67,0.7);
+    position:absolute;
+    background:none;width:auto;height:auto;border-radius:0;
+  `;
+  pc.appendChild(p);
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // counter animation
+      const val = e.target.querySelector('[data-target]');
+      if (val) {
+        const target = parseInt(val.dataset.target);
+        const span = val.querySelector('span');
+        if (span && span.textContent === '0') {
+          let cur = 0;
+          const step = target / 40;
+          const timer = setInterval(() => {
+            cur = Math.min(cur + step, target);
+            span.textContent = Math.round(cur);
+            if (cur >= target) clearInterval(timer);
+          }, 40);
+        }
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+
+// Form submit
+function submitCTA() {
+  document.getElementById('cta-form').style.display = 'none';
+  document.getElementById('cta-success').style.display = 'block';
+}
+
+// Smooth scroll for all anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+</script>
+</body>
+</html>
